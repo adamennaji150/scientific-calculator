@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Scientific Calculator</title>
+  <style>
+    h2{
+      color: #22c55e;
+   }
+   p{
+    color: #aa1010;
+    font-size: 12px;
+    font-weight: 700;
+    
+   }
+   
+     :root {
+      --bg: #0d56ff; /* slate-900 */
+      --panel: #230e41; /* gray-900 */
+      --glass: rgba(12, 59, 0, 0.966);
+      --text: #ffffff; /* gray-200 */
+      --muted: #ff0000; /* gray-400 */
+      --accent: #38bdf8; /* sky-400 */
+      --accent-2: #a78bfa; /* violet-400 */
+      --danger: #ef4444; /* red-500 */
+      --ok: #22c55e; /* green-500 */
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 20% 0%, #172554 0%, var(--bg) 60%);
+      color: var(--text);
+      display: grid; place-items: center; padding: 24px;
+    }
+    .calc {
+      width: min(980px, 96vw);
+      display: grid; gap: 18px;
+      grid-template-columns: 1fr 300px;
+    }
+    @media (max-width: 900px){ .calc { grid-template-columns: 1fr; } }
+
+    .screen {
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(255,255,255,.03));
+      border: 1px solid rgba(26, 3, 36, 0.849);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding: 18px 18px 6px;
+    }
+    .display {
+      font-variant-numeric: tabular-nums;
+      width: 100%;
+      background: transparent; border: 0; outline: 0; color: var(--text);
+      font-size: clamp(24px, 3.6vw, 36px);
+      text-align: right;
+    }
+    .mini {
+      display: flex; justify-content: space-between; align-items: center;
+      color: var(--muted); font-size: 12px; padding-top: 6px;
+    }
+
+    .pad {
+      display: grid; gap: 10px; grid-template-columns: repeat(6, 1fr);
+      background: var(--panel);
+      border-radius: var(--radius);
+      padding: 14px; box-shadow: var(--shadow);
+      border: 1px solid rgb(255, 255, 255);
+    }
+    button.key {
+      appearance: none; border: 0; outline: 0; cursor: pointer;
+      background: var(--glass);
+      border: 1px solid rgb(255, 255, 255);
+      color: var(--text);
+      padding: 16px 10px;
+      border-radius: 14px;
+      font-size: 16px; line-height: 1; font-weight: 600;
+      transition: transform .04s ease, filter .15s ease, background .2s ease;
+      user-select: none;
+    }
+    button.key:hover { filter: brightness(1.1); }
+    button.key:active { transform: translateY(1px) scale(.99); }
+    .k-op { color: var(--accent); }
+    .k-fn { color: var(--accent-2); }
+    .k-eq { background: linear-gradient(90deg, var(--accent), var(--accent-2)); color: #0b1220; font-weight: 800; }
+    .k-del { color: #aa1010; }
+    .span-2 { grid-column: span 2; }
+    .span-3 { grid-column: span 3; }
+
+    .side {
+      display: grid; gap: 12px;
+    }
+    .card {
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgb(113, 28, 192);
+      padding: 14px;
+    }
+    .card h3 { margin: 0 0 8px; font-size: 14px; color: var(--muted); letter-spacing: .6px; text-transform: uppercase; }
+    .history { max-height: 340px; overflow: auto; display: grid; gap: 8px; }
+    .history-item { display: flex; justify-content: space-between; gap: 8px; background: rgba(255,255,255,.04); padding: 10px; border-radius: 12px; }
+    .history-item b { color: var(--text); }
+    .pill { font-size: 12px; padding: 4px 8px; border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); color: var(--muted); }
+    .toolbar { display: flex; gap: 8px; align-items: center; }
+    .tip { color: var(--muted); font-size: 12px; margin-top: 6px; }
+    .link { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <h2>scientific calculator</h2>
+  <p>You can use keybord (for PC users) </p>
+  <div class="calc">
+    <div>
+      <div class="screen">
+        <input id="display" class="display" placeholder="0" autocomplete="off" />
+        <div class="mini">
+          <div class="toolbar">
+            <span class="pill">Mode: <b id="modeLabel">RAD</b></span>
+            <button class="key" style="padding:6px 10px" id="toggleMode" title="Toggle Degrees/Radians">DEG ⟷ RAD</button>
+          </div>
+          <div class="toolbar">
+            <button class="key" style="padding:6px 10px" id="copyBtn" title="Copy result">Copy</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pad" id="pad">
+        <!-- Row: Functions -->
+        <button class="key k-fn" data-insert="sin(">sin</button>
+        <button class="key k-fn" data-insert="cos(">cos</button>
+        <button class="key k-fn" data-insert="tan(">tan</button>
+        <button class="key k-fn" data-insert="asin(">asin</button>
+        <button class="key k-fn" data-insert="acos(">acos</button>
+        <button class="key k-fn" data-insert="atan(">atan</button>
+
+        <button class="key k-fn" data-insert="log10(">log</button>
+        <button class="key k-fn" data-insert="ln(">ln</button>
+        <button class="key k-fn" data-insert="sqrt(">√</button>
+        <button class="key k-fn" data-insert="abs(">abs</button>
+        <button class="key k-fn" data-insert="floor(">floor</button>
+        <button class="key k-fn" data-insert="ceil(">ceil</button>
+
+        <!-- Row: Constants & parentheses -->
+        <button class="key" data-insert="(">(</button>
+        <button class="key" data-insert=")">)</button>
+        <button class="key" data-insert=",">,</button>
+        <button class="key" data-insert="π">π</button>
+        <button class="key" data-insert="E">e</button>
+        <button class="key" data-insert="**">x^y</button>
+
+        <!-- Row: Controls -->
+        <button class="key k-del" id="clear">AC</button>
+        <button class="key k-del" id="del">DEL</button>
+        <button class="key k-op" data-insert="/">÷</button>
+        <button class="key k-op" data-insert="*">×</button>
+        <button class="key k-op" data-insert="-">−</button>
+        <button class="key k-op" data-insert="+">+</button>
+
+        <!-- Row: Digits -->
+        <button class="key" data-insert="1">1</button>
+        <button class="key" data-insert="2">2</button>
+        <button class="key" data-insert="3">3</button>
+        <button class="key k-fn" data-insert="fact(">n!</button>
+        <button class="key k-fn" data-insert="pow10(">10^x</button>
+        <button class="key k-fn" data-insert="exp(">exp</button>
+
+        <button class="key" data-insert="4">4</button>
+        <button class="key" data-insert="5">5</button>
+        <button class="key" data-insert="6">6</button>
+        <button class="key k-fn" data-insert="min(">min</button>
+        <button class="key k-fn" data-insert="max(">max</button>
+        <button class="key k-fn" data-insert="rand(">rand</button>
+
+        <button class="key" data-insert="7">7</button>
+        <button class="key" data-insert="8">8</button>
+        <button class="key" data-insert="9">9</button>
+        <button class="key span-3 k-eq" id="equals">=</button>
+
+        <button class="key span-2" data-insert="0">0</button>
+        <button class="key" data-insert=".">.</button>
+        <button class="key" id="ans">ANS</button>
+      </div>
+
+      <div class="tip">Keyboard support: digits, + - * / ( ) . , Enter (=), Backspace (DEL). Functions like <code>sin(</code>, <code>sqrt(</code> etc. use normal text.</div>
+    </div>
+
+    <aside class="side">
+      <div class="card">
+        <h3>History</h3>
+        <div id="history" class="history" aria-live="polite"></div>
+      </div>
+      <div class="card">
+        <h3>Quick Help</h3>
+        <div class="tip">
+          • Mode toggles angles: DEG or RAD. Functions <code>sin, cos, tan, asin, acos, atan</code> respect this.<br/>
+          • Use <code>x**y</code> or the <b>x^y</b> key for powers.<br/>
+          • <code>log(x)</code> is base‑10, <code>ln(x)</code> is natural log.<br/>
+          • <code>n!</code> uses <code>fact(n)</code> (wraps automatically if you type <code>fact(5)</code>).<br/>
+          • Constants: π = 3.14159…, e = 2.71828…
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // ---- Math helpers with DEG/RAD support ----
+    let ANGLE_MODE = 'RAD';
+    const toRad = x => x * Math.PI / 180;
+    const toDeg = x => x * 180 / Math.PI;
+
+    function fact(n){
+      if(!Number.isFinite(n) || n < 0) return NaN;
+      if(n % 1 !== 0) { // Gamma for non-integers via approximation
+        // Lanczos approximation for Gamma(n+1) ≈ factorial of non-integers
+        const g = 7, p = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313,
+          -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+        if(n < 0.5) return Math.PI / (Math.sin(Math.PI*n) * fact(1-n));
+        n -= 1; let x = p[0];
+        for(let i=1; i<g+2; i++) x += p[i]/(n+i);
+        const t = n + g + 0.5;
+        return Math.sqrt(2*Math.PI) * Math.pow(t, n+0.5) * Math.exp(-t) * x;
+      }
+      let r = 1; for(let i=2;i<=n;i++) r*=i; return r;
+    }
+    const log10 = x => Math.log10(x);
+    const ln = x => Math.log(x);
+    const sqrt = x => Math.sqrt(x);
+    const abs = x => Math.abs(x);
+    const floor = x => Math.floor(x);
+    const ceil = x => Math.ceil(x);
+    const exp = x => Math.exp(x);
+    const pow10 = x => Math.pow(10, x);
+    const rand = (a=0, b=1) => Math.random()*(b-a)+a;
+
+    // Trig functions aware of ANGLE_MODE
+    function sin(x){ return ANGLE_MODE==='DEG' ? Math.sin(toRad(x)) : Math.sin(x); }
+    function cos(x){ return ANGLE_MODE==='DEG' ? Math.cos(toRad(x)) : Math.cos(x); }
+    function tan(x){ return ANGLE_MODE==='DEG' ? Math.tan(toRad(x)) : Math.tan(x); }
+    function asin(x){ const r = Math.asin(x); return ANGLE_MODE==='DEG' ? toDeg(r) : r; }
+    function acos(x){ const r = Math.acos(x); return ANGLE_MODE==='DEG' ? toDeg(r) : r; }
+    function atan(x){ const r = Math.atan(x); return ANGLE_MODE==='DEG' ? toDeg(r) : r; }
+
+    // Safe evaluator allowing only our symbols
+    const SAFE_SYMBOL = /[^0-9+\-*/^().,\sEπA-Za-z_\[\]]/g; // we'll transform ^ to ** earlier; keep letters for functions
+
+    function transformInput(src){
+      let s = src.trim();
+      // Replace display-friendly tokens with JS-friendly
+      s = s.replaceAll('π', 'Math.PI');
+      // Uppercase E (constant) -> Math.E when alone; but keep scientific notation like 1e-3 -> don't touch lower-case e
+      s = s.replace(/\bE\b/g, 'Math.E');
+      // Power: already inserts ** from key, but allow caret too
+      s = s.replace(/\^/g, '**');
+      return s;
+    }
+
+    function evaluateExpression(src){
+      const s = transformInput(src);
+      // Guard: only allow reasonable characters
+      if (SAFE_SYMBOL.test(s)) {
+        SAFE_SYMBOL.lastIndex = 0;
+        throw new Error('Unsupported characters in expression');
+      }
+      // Build a new Function with a limited scope
+      // Expose only the helpers we defined above
+      const fn = new Function('sin','cos','tan','asin','acos','atan','log10','ln','sqrt','abs','floor','ceil','exp','pow10','min','max','rand','fact','Math', `
+        "use strict";
+        return ( ${s} );
+      `);
+      return fn(sin,cos,tan,asin,acos,atan,log10,ln,sqrt,abs,floor,ceil,exp,pow10,Math.min,Math.max,rand,fact,Math);
+    }
+
+    // ---- UI Logic ----
+    const display = document.getElementById('display');
+    const history = document.getElementById('history');
+    const ansBtn = document.getElementById('ans');
+    const equals = document.getElementById('equals');
+    const del = document.getElementById('del');
+    const clear = document.getElementById('clear');
+    const toggleMode = document.getElementById('toggleMode');
+    const modeLabel = document.getElementById('modeLabel');
+    const copyBtn = document.getElementById('copyBtn');
+
+    let LAST_ANSWER = 0;
+
+    function insertText(txt){
+      const start = display.selectionStart ?? display.value.length;
+      const end = display.selectionEnd ?? display.value.length;
+      const before = display.value.slice(0, start);
+      const after = display.value.slice(end);
+      display.value = before + txt + after;
+      const pos = start + txt.length;
+      display.focus();
+      display.setSelectionRange(pos, pos);
+    }
+
+    // Bind buttons
+    document.getElementById('pad').addEventListener('click', (e)=>{
+      const b = e.target.closest('button.key');
+      if(!b) return;
+      const ins = b.dataset.insert;
+      if(ins!=null){ insertText(ins); return; }
+    });
+
+    equals.addEventListener('click', ()=>{
+      calc();
+    });
+
+    del.addEventListener('click', ()=>{
+      if(!display.value) return;
+      const start = display.selectionStart ?? display.value.length;
+      const end = display.selectionEnd ?? display.value.length;
+      if(start !== end){
+        const before = display.value.slice(0, start);
+        const after = display.value.slice(end);
+        display.value = before + after;
+        display.setSelectionRange(start, start);
+      } else {
+        const i = Math.max(0, start-1);
+        display.value = display.value.slice(0, i) + display.value.slice(start);
+        display.setSelectionRange(i, i);
+      }
+      display.focus();
+    });
+
+    clear.addEventListener('click', ()=>{ display.value = ''; display.focus(); });
+
+    toggleMode.addEventListener('click', ()=>{
+      ANGLE_MODE = ANGLE_MODE === 'DEG' ? 'RAD' : 'DEG';
+      modeLabel.textContent = ANGLE_MODE;
+    });
+
+    copyBtn.addEventListener('click', async()=>{
+      try {
+        await navigator.clipboard.writeText(display.value);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(()=>copyBtn.textContent='Copy', 900);
+      } catch {}
+    });
+
+    ansBtn.addEventListener('click', ()=> insertText(String(LAST_ANSWER)));
+
+    function pushHistory(expr, result){
+      const row = document.createElement('div');
+      row.className = 'history-item';
+      const e = document.createElement('span'); e.textContent = expr;
+      const r = document.createElement('b'); r.textContent = result;
+      row.append(e,r);
+      row.addEventListener('click', ()=>{ display.value = String(result); display.focus(); });
+      history.prepend(row);
+    }
+
+    function formatNumber(x){
+      if(!Number.isFinite(x)) return String(x);
+      // show up to 12 significant digits, strip trailing zeros
+      let s = Number(x).toPrecision(12);
+      // If the absolute value is very large or tiny, toPrecision uses exponential; it's okay.
+      // Clean trailing zeros in decimal form
+      if(s.includes('e') || s.includes('E')) return s;
+      if(s.includes('.')) s = s.replace(/\.?0+$/,'');
+      return s;
+    }
+
+    function calc(){
+      const expr = display.value.trim();
+      if(!expr) return;
+      try{
+        const val = evaluateExpression(expr);
+        const out = formatNumber(val);
+        LAST_ANSWER = val;
+        pushHistory(expr, out);
+        display.value = out;
+      } catch(err){
+        display.value = 'Error';
+        setTimeout(()=>{ display.value=''; }, 800);
+        console.error(err);
+      }
+      display.focus();
+    }
+
+    // Keyboard support
+    display.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter'){ e.preventDefault(); calc(); }
+      if(e.key === 'Backspace'){ /* default OK */ }
+    });
+
+    // Auto-focus display on load
+    window.addEventListener('load', ()=> display.focus());
+  </script>
+</body>
+</html>
