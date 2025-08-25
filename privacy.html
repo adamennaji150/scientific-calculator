@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Politique de Confidentialité</title>
+  <title>Contact</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -15,23 +15,45 @@
     h1 {
       color: #00ffcc;
     }
-    a {
-      color: #00ffcc;
-      text-decoration: none;
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      background-color: #222;
+      color: #fff;
+      border: 1px solid #00ffcc;
+      border-radius: 5px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #00ffcc;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      color: #111;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <h1>Politique de Confidentialité</h1>
-  <p>
-    Nous respectons votre vie privée. Cette application ne collecte pas
-    d’informations personnelles. Toute utilisation des cookies ou de
-    services tiers (comme Google AdSense) est uniquement destinée à
-    améliorer l’expérience utilisateur.
-  </p>
-  <p>
-    Pour toute question, veuillez nous contacter via la page 
-    <a href="contact.html">Contact</a>.
-  </p>
+  <h1>Contactez-nous</h1>
+  <form>
+    <label for="name">ADMX:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="email">adamennaji150@gmail.com :</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="message">Message :</label>
+    <textarea id="message" name="message" rows="5" required></textarea>
+
+    <button type="submit">Envoyer</button>
+  </form>
 </body>
 </html>
+   
