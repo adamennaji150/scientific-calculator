@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- الصفحة الرئيسية -->
+  <url>
+    <loc>https://admx-calculator.online/</loc>
+    <lastmod>2025-09-06</lastmod>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- صفحة الآلة الحاسبة العلمية -->
+  <url>
+    <loc>https://admx-calculator.online/scientific-calculator</loc>
+    <lastmod>2025-09-06</lastmod>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- صفحة الاتصال -->
+  <url>
+    <loc>https://admx-calculator.online/contact.html</loc>
+    <lastmod>2025-09-06</lastmod>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- صفحة سياسة الخصوصية -->
+  <url>
+    <loc>https://admx-calculator.online/privacy.html</loc>
+    <lastmod>2025-09-06</lastmod>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- صفحة الشروط -->
+  <url>
+    <loc>https://admx-calculator.online/terms.html</loc>
+    <lastmod>2025-09-06</lastmod>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- ملف ads.txt (اختياري) -->
+  <url>
+    <loc>https://admx-calculator.online/ads.txt</loc>
+    <lastmod>2025-09-06</lastmod>
+    <priority>0.3</priority>
+  </url>
+
+</urlset>
